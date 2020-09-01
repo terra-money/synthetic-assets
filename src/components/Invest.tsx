@@ -5,7 +5,7 @@ import { Dictionary } from "ramda"
 import c from "classnames"
 
 import { Coin as TerraCoin } from "@terra-money/terra.js"
-import { format, lt } from "@terra-money/use-station"
+import { format, gte } from "@terra-money/use-station"
 
 import { marketAddress, DENOM } from "../helpers/constants"
 import contractQuery from "../helpers/contractQuery"
@@ -19,6 +19,8 @@ interface Simulated {
   returnAmount: Coin
   spreadAmount: Coin
 }
+
+const CURRENCY = "uusd"
 
 const Invest = () => {
   const { hash } = useLocation()
@@ -36,13 +38,24 @@ const Invest = () => {
   }, [refreshPrice, refreshBalance, txhash])
 
   /* form */
-  const [type, setType] = useState<Type>(hash.replace("#", "") as Type)
+  const initType = () => (hash.replace("#", "") as Type) || Type.BUY
+  const [type, setType] = useState<Type>(initType)
   const [input, setInput] = useState<string>("")
   const [symbol, setSymbol] = useState<string>("")
   const amount = format.toAmount(input)
-  const disabled =
-    !symbol || !balance.data?.[symbol] || lt(balance.data[symbol], amount)
 
+  /* validate */
+  const validateBalance = (denom: string) =>
+    !!balance.data?.[denom] && gte(balance.data[denom], amount)
+
+  const canInvest: Record<Type, boolean> = {
+    [Type.SELL]: validateBalance(symbol),
+    [Type.BUY]: validateBalance(CURRENCY),
+  }
+
+  const disabled = !symbol || !canInvest[type]
+
+  /* submit */
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
     const { address } = wallet!
