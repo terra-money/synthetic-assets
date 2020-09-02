@@ -21,6 +21,11 @@ interface Simulated {
 }
 
 const CURRENCY = "uusd"
+const CONFIG = {
+  chainID: "tequila-0002",
+  URL: "https://tequila-lcd.terra.dev",
+  gasPrices: { uusd: 0.015 },
+}
 
 const Invest = () => {
   const { hash } = useLocation()
@@ -59,7 +64,7 @@ const Invest = () => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
     const { address } = wallet!
-    post(createMsg.contract({ address, type, amount, denom: symbol }))
+    post(createMsg.contract({ address, type, amount, denom: symbol }), CONFIG)
   }
 
   /* simulate */

@@ -2,7 +2,7 @@
   "name": "synthetic-assets",
   "version": "1.0.0",
   "dependencies": {
-    "@terra-money/terra.js": "^0.4.14-rc.1",
+    "@terra-money/terra.js": "^0.4.14-rc.2",
     "@terra-money/use-station": "^3.8.15",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^10.4.9",
