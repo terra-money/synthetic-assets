@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment } from "react"
 import { ReactNode, FormEvent } from "react"
 import { useLocation } from "react-router-dom"
-import { Dictionary } from "ramda"
+import { Dictionary, isNil } from "ramda"
 import c from "classnames"
 
 import { Coin as TerraCoin } from "@terra-money/terra.js"
@@ -30,7 +30,7 @@ const CONFIG = {
 const Invest = () => {
   const { hash } = useLocation()
   const { wallet } = useApp()
-  const { post, hash: txhash } = useSubmit()
+  const { post, success, result } = useSubmit()
 
   /* init */
   const { execute: refreshPrice, ...prices } = usePrices()
@@ -40,7 +40,7 @@ const Invest = () => {
   useEffect(() => {
     refreshPrice()
     refreshBalance()
-  }, [refreshPrice, refreshBalance, txhash])
+  }, [refreshPrice, refreshBalance])
 
   /* form */
   const initType = () => (hash.replace("#", "") as Type) || Type.BUY
@@ -58,7 +58,7 @@ const Invest = () => {
     [Type.BUY]: validateBalance(CURRENCY),
   }
 
-  const disabled = !symbol || !canInvest[type]
+  const disabled = !symbol || !input || !canInvest[type]
 
   /* submit */
   const handleSubmit = (e: FormEvent) => {
@@ -111,8 +111,12 @@ const Invest = () => {
     },
   ]
 
-  return txhash ? (
-    <span>{txhash}</span>
+  return !isNil(success) ? (
+    success ? (
+      <pre>{JSON.stringify(result, null, 2)}</pre>
+    ) : (
+      <span>Failed</span>
+    )
   ) : (
     <form className="mx-auto my-5" onSubmit={handleSubmit}>
       <h1>Invest</h1>
