@@ -36,12 +36,6 @@ const Invest = () => {
   const { execute: refreshPrice, ...prices } = usePrices()
   const { execute: refreshBalance, ...balance } = useBalance()
 
-  /* refresh on txhash changed */
-  useEffect(() => {
-    refreshPrice()
-    refreshBalance()
-  }, [refreshPrice, refreshBalance])
-
   /* form */
   const initType = () => (hash.replace("#", "") as Type) || Type.BUY
   const [type, setType] = useState<Type>(initType)

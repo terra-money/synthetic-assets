@@ -14,20 +14,22 @@ export default (): API<Balance> => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error>()
 
-  const execute = useCallback(async (address: string) => {
-    try {
-      const balance = await queryBalance(address)
-      setBalance(balance)
-    } catch (error) {
-      setError(error)
-    } finally {
-      setLoading(false)
+  const execute = useCallback(async () => {
+    if (address) {
+      try {
+        const balance = await queryBalance(address)
+        setBalance(balance)
+      } catch (error) {
+        setError(error)
+      } finally {
+        setLoading(false)
+      }
     }
-  }, [])
+  }, [address])
 
   useEffect(() => {
-    address && execute(address)
-  }, [address, execute])
+    execute()
+  }, [execute])
 
   return { data: balance, loading, error, execute }
 }
